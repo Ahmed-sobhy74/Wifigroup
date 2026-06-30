@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview — Spin Stack Banner</title>
+<style>
+  body{ margin:0; background:#000; padding:30px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+  3D SPIN STACK BANNER — منتج وسط واضح + اتنين فوق وتحت بيلفّوا
+============================================ -->
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+  .ssb-wrap{
+    position: relative;
+    min-height: 560px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(circle at 30% 30%, #141327 0%, #0B0E14 70%);
+    direction: rtl;
+    font-family: 'Tajawal', sans-serif;
+  }
+  .ssb-content{
+    position: relative; z-index: 5;
+    display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+    gap: 10px; padding: 60px 60px; min-height: 560px;
+  }
+
+  .ssb-text h2{ color:#fff; font-size:36px; font-weight:900; margin:0 0 14px; line-height:1.3; font-family:'Tajawal',sans-serif; }
+  .ssb-text h2 span{ color:#00E0C7; }
+  .ssb-text p{ color: rgba(255,255,255,.6); font-size:15px; margin:0 0 24px; max-width:380px; font-family:'Tajawal',sans-serif; font-weight:400; }
+  .ssb-text a{
+    display:inline-flex; background:#00E0C7; color:#06151A; font-weight:800; font-size:15px;
+    padding:13px 28px; border-radius:8px; text-decoration:none; font-family:'Tajawal',sans-serif;
+  }
+
+  .ssb-stage{
+    position: relative; height: 420px;
+    display: flex; align-items: center; justify-content: center;
+    perspective: 900px;
+    transform: translateX(70px);
+  }
+  .ssb-card{
+    position: absolute;
+    width: 480px; height: 330px;
+    display: flex; align-items: center; justify-content: center;
+    transform-style: preserve-3d;
+    transition: transform 1.1s cubic-bezier(.4,.5,.2,1), opacity 1.1s ease, filter 1.1s ease;
+    will-change: transform, opacity, filter;
+  }
+  .ssb-card img{ max-width:100%; max-height:100%; object-fit:contain; transition: filter 1.1s ease; }
+
+  .ssb-card.pos-front{
+    transform: translate(0,0) translateZ(30px) rotateX(0deg) rotateY(0deg) scale(1);
+    opacity: 1; filter: blur(0); z-index: 3;
+  }
+  .ssb-card.pos-front img{ filter: none; }
+
+  .ssb-card.pos-top, .ssb-card.pos-bottom{ background: transparent; }
+  .ssb-card.pos-top img, .ssb-card.pos-bottom img{
+    filter: grayscale(.25) brightness(.55) saturate(1.1);
+  }
+
+  .ssb-card.pos-top{
+    transform: translate(-280px, -150px) translateZ(-90px) rotateY(12deg) scale(.7);
+    opacity: .85; filter: blur(.5px); z-index: 1;
+  }
+  .ssb-card.pos-bottom{
+    transform: translate(-180px, 150px) translateZ(-20px) rotateY(12deg) scale(.7);
+    opacity: .85; filter: blur(.5px); z-index: 1;
+  }
+
+  @media (max-width: 750px){
+    .ssb-content{ grid-template-columns:1fr; text-align:center; padding:30px; }
+    .ssb-text h2{ font-size:24px; }
+    .ssb-stage{ height: 280px; transform: translateX(0); }
+    .ssb-card{ width:170px; height:170px; }
+    .ssb-card.pos-top{ transform: translate(-70px, -80px) translateZ(-20px) rotateY(12deg) scale(.6); }
+    .ssb-card.pos-bottom{ transform: translate(-70px, 80px) translateZ(-20px) rotateY(12deg) scale(.6); }
+  }
+</style>
+
+<div class="ssb-wrap">
+  <div class="ssb-content">
+    <div class="ssb-text">
+      <h2>كل احتياجك من الهاردوير <span>عندنا</span></h2>
+      <p>معالجات، كروت شاشة، رامات، وكل قطعة هاردوير تحتاجها — أصلي ومضمون.</p>
+      <a href="/collections/all">تسوق الآن</a>
+    </div>
+    <div class="ssb-stage" id="ssbStage"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var images = [
+    "https://elyamamastore.com/cdn/shop/files/Gigabyte-RTX-5060-EAGLE-ICE-OC-Advanced-8-GB-GDDR7-Graphics-Card-for-Elite-Gaming-Elyamama-37925064900839.png?v=1764074001&width=1214",
+    "https://cdn.raiq.dev/cGg9jianj9.png",
+    "https://d2vfia6k6wrouk.cloudfront.net/productimages/026769ef-e581-4b5f-bc57-b2c0009c7bee/images/10-pny-rtx-5060-argb-oc-epic-x-triple-fan-pk.png"
+  ];
+
+  var intervalSeconds = 2.6;
+
+  var stage = document.getElementById('ssbStage');
+  var cards = images.map(function(src){
+    var div = document.createElement('div');
+    div.className = 'ssb-card';
+    div.innerHTML = '<img src="' + src + '" alt="" loading="lazy">';
+    stage.appendChild(div);
+    return div;
+  });
+
+  var order = [0, 1, 2];
+
+  function render(){
+    cards.forEach(function(c){ c.classList.remove('pos-top','pos-front','pos-bottom'); });
+    cards[order[0]].classList.add('pos-top');
+    cards[order[1]].classList.add('pos-front');
+    cards[order[2]].classList.add('pos-bottom');
+  }
+
+  function rotateStack(){
+    order = [ order[2], order[0], order[1] ];
+    render();
+  }
+
+  render();
+  if (cards.length > 1){
+    setInterval(rotateStack, intervalSeconds * 1000);
+  }
+})();
+</script>
+
+</body>
+</html>
